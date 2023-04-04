@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "457606859065",
+    "project_id": "booking-f8bac",
+    "storage_bucket": "booking-f8bac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457606859065:android:5534d0e20e1b1704fc00e8",
+        "android_client_info": {
+          "package_name": "com.nduati.booking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "457606859065-o500icr9vgr4ociv2p41gt61fej4bkfq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApcOY3kSvfTHEohTcF1XKzUeZASSvDWYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "457606859065-o500icr9vgr4ociv2p41gt61fej4bkfq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
