@@ -65,26 +65,30 @@ class _HomeState extends State<Home> {
           padding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 10,
-          ),          
-          child: Consumer<Queues>(builder: (context, queue, _) {
-            return ListView.builder(
-                itemCount: queue.userServices.length,
-                itemBuilder: (context, index) {
-                  List<String> titles = [];
-                  List<int> timePeriod = [];
-                  for (int i = 0; i < queue.userServices.length; i++) {
-                    Map<String, int> val =
-                        queue.userServices.values.elementAt(i);
-                    titles.addAll(val.keys);
-                    timePeriod.addAll(val.values);
-                  }
-                  return ListTile(
-                    title: Text(titles[index]),
-                    trailing: Text(
-                        '${(timePeriod[index] / 60).floor()} hrs ${timePeriod[index] % 60} mins'),
+          ),
+          child: userServices.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : Consumer<Queues>(builder: (context, queue, _) {
+                  return ListView.separated(
+                    itemCount: queue.userServices.length,
+                    itemBuilder: (context, index) {
+                      List<String> titles = [];
+                      List<int> timePeriod = [];
+                      for (int i = 0; i < queue.userServices.length; i++) {
+                        Map<String, int> val =
+                            queue.userServices.values.elementAt(i);
+                        titles.addAll(val.keys);
+                        timePeriod.addAll(val.values);
+                      }
+                      return ListTile(
+                        title: Text(titles[index]),
+                        trailing: Text(
+                            '${(timePeriod[index] / 60).floor()} hrs ${timePeriod[index] % 60} mins'),
+                      );
+                    },
+                    separatorBuilder: (context, index) => const Divider(),
                   );
-                });
-          }),
+                }),
         ),
       ),
       floatingActionButton: FloatingActionButton(
