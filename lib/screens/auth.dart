@@ -1,5 +1,6 @@
 import 'package:booking/screens/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class Authscreen extends StatefulWidget {
@@ -13,6 +14,8 @@ class Authscreen extends StatefulWidget {
 }
 
 class _AuthscreenState extends State<Authscreen> {
+  final FirebaseDatabase database = FirebaseDatabase.instance;
+  TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController cPasswordController = TextEditingController();
@@ -25,6 +28,7 @@ class _AuthscreenState extends State<Authscreen> {
 
   @override
   void dispose() {
+    nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     cPasswordController.dispose();
@@ -60,15 +64,25 @@ class _AuthscreenState extends State<Authscreen> {
               authErrorResponse = "Invalid Email";
             });
           } else {
+            // Add network-request-failed
             authErrorResponse = e.code;
           }
         }
       } else {
         try {
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          final userDbRef = database.ref().child("/users_credentials");
+          UserCredential result =
+              await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text.trim(),
             password: passwordController.text.trim(),
           );
+          User user = result.user!;
+          user.updateDisplayName(nameController.text.trim());
+          userDbRef.push().set({
+            "Name": nameController.text.trim(),
+            "Uid": FirebaseAuth.instance.currentUser!.uid,
+            "Email": emailController.text.trim(),
+          });
           _redirect();
         } on FirebaseAuthException catch (e) {
           setState(() {
@@ -106,8 +120,8 @@ class _AuthscreenState extends State<Authscreen> {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 220,
+                  SizedBox(
+                    height: signup == false ? 220 : 180,
                   ),
                   Text(
                     signup == false ? 'Login' : 'Signup',
@@ -123,6 +137,24 @@ class _AuthscreenState extends State<Authscreen> {
                       key: widget._formKey,
                       child: Column(
                         children: [
+                          signup == true
+                              ? TextFormField(
+                                  controller: nameController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Full Name',
+                                  ),
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Email required';
+                                    }
+                                    return null;
+                                  },
+                                )
+                              : const SizedBox(),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           TextFormField(
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,

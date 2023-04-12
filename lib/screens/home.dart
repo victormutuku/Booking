@@ -1,16 +1,37 @@
 import 'package:booking/screens/auth.dart';
 import 'package:booking/screens/join_queue.dart';
+import 'package:booking/utils/queues.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 enum MenuOptions { logout }
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   static const routeName = "/homescreen";
 
   const Home({super.key});
 
   @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final FirebaseDatabase database = FirebaseDatabase.instance;
+  final List items = [];
+
+  @override
+  void didChangeDependencies() {
+    Provider.of<Queues>(context).retrieveUserDetails();
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final databaseReference = database.ref().child("/users_services");
+    final userServices = Provider.of<Queues>(context).userServices;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -24,6 +45,7 @@ class Home extends StatelessWidget {
             position: PopupMenuPosition.under,
             onSelected: (value) {
               if (value == MenuOptions.logout) {
+                FirebaseAuth.instance.signOut();
                 Navigator.of(context)
                     .pushReplacementNamed(Authscreen.routeName);
               }
@@ -43,40 +65,26 @@ class Home extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 10,
-          ),
-          child: ListView(
-            children: [
-              ListTile(
-                title: const Text('Brian'),
-                trailing: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Chip(
-                      label: const Text('Serving'),
-                      backgroundColor:
-                          Theme.of(context).primaryColor.withOpacity(0.3),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    const Text('30 min'),
-                  ],
-                ),
-              ),
-              const Divider(),
-              const ListTile(
-                title: Text('John'),
-                trailing: Text('40 min'),
-              ),
-              const Divider(),
-              const ListTile(
-                title: Text('Jane'),
-                trailing: Text('30 min'),
-              ),
-              const Divider(),
-            ],
-          ),
+          ),          
+          child: Consumer<Queues>(builder: (context, queue, _) {
+            return ListView.builder(
+                itemCount: queue.userServices.length,
+                itemBuilder: (context, index) {
+                  List<String> titles = [];
+                  List<int> timePeriod = [];
+                  for (int i = 0; i < queue.userServices.length; i++) {
+                    Map<String, int> val =
+                        queue.userServices.values.elementAt(i);
+                    titles.addAll(val.keys);
+                    timePeriod.addAll(val.values);
+                  }
+                  return ListTile(
+                    title: Text(titles[index]),
+                    trailing: Text(
+                        '${(timePeriod[index] / 60).floor()} hrs ${timePeriod[index] % 60} mins'),
+                  );
+                });
+          }),
         ),
       ),
       floatingActionButton: FloatingActionButton(

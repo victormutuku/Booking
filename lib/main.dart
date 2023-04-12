@@ -1,8 +1,10 @@
 import 'package:booking/screens/auth.dart';
 import 'package:booking/screens/home.dart';
 import 'package:booking/screens/join_queue.dart';
+import 'package:booking/utils/queues.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,26 +17,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
-          actionsIconTheme:
-              IconThemeData(color: Theme.of(context).primaryColor),
-          centerTitle: true,
-        ),
+    return ChangeNotifierProvider(
+      create: (context) => Queues(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
+            actionsIconTheme:
+                IconThemeData(color: Theme.of(context).primaryColor),
+            centerTitle: true,
+          ),
+        ),  
+        home: Authscreen(),
+        routes: {
+          Authscreen.routeName: (context) => Authscreen(),
+          Home.routeName: (context) => const Home(),
+          JoinQueueScreen.routeName: (context) => const JoinQueueScreen(),
+        },
+        debugShowCheckedModeBanner: false,
       ),
-      home: Authscreen(),
-      routes: {
-        Authscreen.routeName: (context) => Authscreen(),
-        Home.routeName: (context) => const Home(),
-        JoinQueueScreen.routeName: (context) => const JoinQueueScreen(),
-      },
-      debugShowCheckedModeBanner: false,
     );
   }
 }
