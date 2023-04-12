@@ -2,6 +2,7 @@ import 'package:booking/screens/auth.dart';
 import 'package:booking/screens/home.dart';
 import 'package:booking/screens/join_queue.dart';
 import 'package:booking/utils/queues.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +32,10 @@ class MyApp extends StatelessWidget {
                 IconThemeData(color: Theme.of(context).primaryColor),
             centerTitle: true,
           ),
-        ),  
-        home: Authscreen(),
+        ),
+        home: FirebaseAuth.instance.currentUser == null
+            ? Authscreen()
+            : const Home(),
         routes: {
           Authscreen.routeName: (context) => Authscreen(),
           Home.routeName: (context) => const Home(),
