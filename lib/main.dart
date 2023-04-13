@@ -1,11 +1,11 @@
-import 'package:booking/screens/auth.dart';
-import 'package:booking/screens/home.dart';
-import 'package:booking/screens/join_queue.dart';
-import 'package:booking/utils/queues.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'screens/auth.dart';
+import 'screens/home.dart';
+import 'screens/join_queue.dart';
+import 'utils/queues.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,6 +1,7 @@
-import 'package:booking/utils/queues.dart';
-import 'package:booking/utils/strings.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:booking/widgets/side_drawer.dart';
+
+import '../utils/queues.dart';
+import '../utils/strings.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +39,6 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -46,6 +46,7 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
           style: TextStyle(color: Theme.of(context).primaryColor),
         ),
       ),
+      drawer: const SideDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
