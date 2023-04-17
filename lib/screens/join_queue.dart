@@ -1,12 +1,11 @@
 import 'dart:developer';
 
-import 'package:booking/widgets/side_drawer.dart';
-
-import '../utils/queues.dart';
-import '../utils/strings.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../widgets/side_drawer.dart';
+import '../utils/queues.dart';
+import '../utils/strings.dart';
 
 enum Service { oilchange, tires, service, paint }
 

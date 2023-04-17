@@ -1,9 +1,9 @@
-import 'package:booking/screens/admin.dart';
-
-import 'home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+
+import 'admin_auth.dart';
+import 'home.dart';
 
 class Authscreen extends StatefulWidget {
   static const routeName = "/authscreen";
@@ -279,7 +279,7 @@ class _AuthscreenState extends State<Authscreen> {
                           ),
                           TextButton(
                             onPressed: () => Navigator.of(context)
-                                .pushReplacementNamed(Admin.routeName),
+                                .pushNamed(AdminAuth.routeName),
                             child: const Text('Login in as Admin'),
                           ),
                           const SizedBox(
