@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:booking/widgets/side_drawer.dart';
 
 import '../utils/queues.dart';
@@ -24,6 +26,13 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
   bool _tiresSelected = false;
   bool _serviceSelected = false;
   bool _paintSelected = false;
+  List<int> svList = [0, 0, 0, 0];
+  bool _runOilChangeOnce = false;
+  bool _runTiresOnce = false;
+  bool _runServiceOnce = false;
+  bool _runPaintOnce = false;
+
+  Map<String, int> serviceValueList = {};
 
   int selectedHrs = 0;
   int selectedMins = 0;
@@ -37,8 +46,110 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
     );
   }
 
+  fetchServiceValues() async {
+    final databaseReference = database.ref().child("/admin_services");
+    final prevDb = await databaseReference.once();
+    final retPrevDb = prevDb.snapshot.value as Map;
+    final fPrevDb = retPrevDb.values.first as Map;
+    // log(fPrevDb.values.first.toString());
+    for (int i = 0; i < fPrevDb.values.length; i++) {
+      final xs = fPrevDb.values.elementAt(i) as Map;
+      log(xs.toString());
+      for (int j = 0; j < xs.length; j++) {
+        serviceValueList.putIfAbsent(
+            xs.values.elementAt(1), () => xs.values.elementAt(0));
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    fetchServiceValues();
+    super.initState();
+  }
+
+  int serviceTime = 0;
+
+  int sVal() {
+    if (_oilChangeSelected == true) {
+      if (_runOilChangeOnce == false) {
+        svList[0] = serviceValueList.values.first;
+        setState(() {
+          serviceTime += svList[0];
+        });
+        _runOilChangeOnce = true;
+      }
+    } else {
+      setState(() {
+        serviceTime -= svList[0];
+      });
+      svList[0] = 0;
+      _runOilChangeOnce = false;
+    }
+    if (_tiresSelected == true) {
+      if (_runTiresOnce == false) {
+        svList[1] = serviceValueList.values.elementAt(1);
+        setState(() {
+          serviceTime += svList[1];
+        });
+        _runTiresOnce = true;
+      }
+    } else {
+      setState(() {
+        serviceTime -= svList[1];
+      });
+      svList[1] = 0;
+      _runTiresOnce = false;
+    }
+    if (_serviceSelected == true) {
+      if (_runServiceOnce == false) {
+        svList[2] = serviceValueList.values.elementAt(2);
+        setState(() {
+          serviceTime += svList[2];
+        });
+        _runServiceOnce = true;
+      }
+    } else {
+      setState(() {
+        serviceTime -= svList[2];
+      });
+      svList[2] = 0;
+      _runServiceOnce = false;
+    }
+
+    if (_paintSelected == true) {
+      if (_runPaintOnce == false) {
+        svList[3] = serviceValueList.values.elementAt(3);
+        setState(() {
+          serviceTime += svList[3];
+        });
+        _runPaintOnce = true;
+      }
+      // svList[3] = 0;
+    } else {
+      setState(() {
+        serviceTime -= svList[3];
+      });
+      svList[3] = 0;
+      _runPaintOnce = false;
+    }
+
+    return serviceTime;
+  }
+
+  int totalServiceTime = 0;
+
+  int totalsVal() {
+    setState(() {
+      totalServiceTime = serviceTime + (selectedHrs * 60) + selectedMins;
+    });
+    return totalServiceTime;
+  }
+
   @override
   Widget build(BuildContext context) {
+    sVal();
+    totalsVal();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -229,10 +340,10 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Row(
-                  children: const [
+                  children: [
                     Text(
-                      '50 min',
-                      style: TextStyle(fontSize: 20),
+                      '${(serviceTime / 60).floor()} hrs ${serviceTime % 60} min',
+                      style: const TextStyle(fontSize: 20),
                     ),
                   ],
                 ),
@@ -252,10 +363,10 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Row(
-                  children: const [
+                  children: [
                     Text(
-                      '50 min',
-                      style: TextStyle(
+                      '${(totalServiceTime/ 60).floor()} hrs ${totalServiceTime % 60} min',
+                      style: const TextStyle(
                         fontSize: 20,
                       ),
                     ),
@@ -275,7 +386,7 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
                       ElevatedButton(
                         onPressed: () {
                           Provider.of<Queues>(context, listen: false)
-                              .joinQueue(selectedHrs, selectedMins, services);
+                              .joinQueue(serviceTime, totalServiceTime, services);
                           setState(() {
                             _showSnackBar();
                             Navigator.of(context).pop();

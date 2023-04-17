@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 const List<DropdownMenuItem> minsList = [
   DropdownMenuItem(
+    value: 0,
+    child: Text('0'),
+  ),
+  DropdownMenuItem(
     value: 5,
     child: Text('5'),
   ),
