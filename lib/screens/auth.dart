@@ -1,3 +1,5 @@
+import 'package:booking/screens/admin.dart';
+
 import 'home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -259,9 +261,6 @@ class _AuthscreenState extends State<Authscreen> {
                                   padding: const EdgeInsets.only(bottom: 12),
                                   child: const CircularProgressIndicator(),
                                 ),
-                          const SizedBox(
-                            height: 10,
-                          ),
                           TextButton(
                             onPressed: () {
                               setState(() {
@@ -278,8 +277,13 @@ class _AuthscreenState extends State<Authscreen> {
                                 ? 'Don\'t have an account? Signup'
                                 : 'Have an account? Login'),
                           ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context)
+                                .pushReplacementNamed(Admin.routeName),
+                            child: const Text('Login in as Admin'),
+                          ),
                           const SizedBox(
-                            height: 50,
+                            height: 10,
                           ),
                           Text(
                             authErrorResponse,

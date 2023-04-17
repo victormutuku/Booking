@@ -1,3 +1,4 @@
+import 'package:booking/screens/admin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         routes: {
           Authscreen.routeName: (context) => Authscreen(),
           Home.routeName: (context) => const Home(),
+          Admin.routeName:(context) => const Admin(),
           JoinQueueScreen.routeName: (context) => const JoinQueueScreen(),
         },
         debugShowCheckedModeBanner: false,
