@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -7,6 +9,7 @@ import '../models/service.dart';
 class Queues with ChangeNotifier {
   FirebaseDatabase database = FirebaseDatabase.instance;
   final Map<String, Map<String, int>> userServices = {};
+  Map<String, int> serviceValueList = {};
   String authErrorResponse = "";
 
   void joinQueue(int serviceTime, int totalTime, List<String> services) {
@@ -60,14 +63,11 @@ class Queues with ChangeNotifier {
     return userServices;
   }
 
-  postServices(List<Service> serviceList) async {
+  postServices(List<Service> serviceList) {
     final databaseReference = database.ref().child("/admin_services");
-    var prevDb = await databaseReference.once();
 
-    if (prevDb.snapshot.value != null) {
-      // databaseReference.remove();
-
-      databaseReference.child("my_services").update({
+    databaseReference.child("my_services").set(
+      {
         "Oil_Change": {
           "service_name": serviceList[0].name,
           "mins": serviceList[0].hrs * 60 + serviceList[0].mins
@@ -84,34 +84,25 @@ class Queues with ChangeNotifier {
           "service_name": serviceList[3].name,
           "mins": serviceList[3].hrs * 60 + serviceList[3].mins
         },
-      });
-      // databaseReference.child("my_services").push().set(
-      //   {
-      //     "service_name": service.name,
-      //     "mins": service.hrs * 60 + service.mins
-      //   },
-      // );
-    } else {
-      databaseReference.child("my_services").set(
-        {
-          "Oil_Change": {
-          "service_name": serviceList[0].name,
-          "mins": serviceList[0].hrs * 60 + serviceList[0].mins
-        },
-        "Tires": {
-          "service_name": serviceList[1].name,
-          "mins": serviceList[1].hrs * 60 + serviceList[1].mins
-        },
-        "Service": {
-          "service_name": serviceList[2].name,
-          "mins": serviceList[2].hrs * 60 + serviceList[2].mins
-        },
-        "Paint": {
-          "service_name": serviceList[3].name,
-          "mins": serviceList[3].hrs * 60 + serviceList[3].mins
-        },
-        },
-      );
+      },
+    );
+    notifyListeners();
+  }
+
+  fetchServiceValues() async {
+    final databaseReference = database.ref().child("/admin_services");
+    final prevDb = await databaseReference.once();
+    final retPrevDb = prevDb.snapshot.value as Map;
+    final fPrevDb = retPrevDb.values.first as Map;
+    serviceValueList.clear();
+    for (int i = 0; i < fPrevDb.values.length; i++) {
+      final xs = fPrevDb.values.elementAt(i) as Map;
+      log(xs.values.elementAt(0).toString());
+      for (int j = 0; j < xs.length; j++) {
+        serviceValueList.putIfAbsent(
+            xs.values.elementAt(1), () => xs.values.elementAt(0));
+      }
     }
+    notifyListeners();
   }
 }
