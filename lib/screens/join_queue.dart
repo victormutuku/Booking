@@ -20,6 +20,8 @@ class JoinQueueScreen extends StatefulWidget {
 class _JoinQueueScreenState extends State<JoinQueueScreen> {
   final FirebaseDatabase database = FirebaseDatabase.instance;
   final List<String> services = [];
+  UniqueKey hrsKey = UniqueKey();
+  UniqueKey minsKey = UniqueKey();
 
   bool _oilChangeSelected = false;
   bool _tiresSelected = false;
@@ -45,26 +47,11 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
     );
   }
 
-  fetchServiceValues() async {
-    final databaseReference = database.ref().child("/admin_services");
-    final prevDb = await databaseReference.once();
-    final retPrevDb = prevDb.snapshot.value as Map;
-    final fPrevDb = retPrevDb.values.first as Map;
-    // log(fPrevDb.values.first.toString());
-    for (int i = 0; i < fPrevDb.values.length; i++) {
-      final xs = fPrevDb.values.elementAt(i) as Map;
-      log(xs.toString());
-      for (int j = 0; j < xs.length; j++) {
-        serviceValueList.putIfAbsent(
-            xs.values.elementAt(1), () => xs.values.elementAt(0));
-      }
-    }
-  }
-
   @override
-  void initState() {
-    fetchServiceValues();
-    super.initState();
+  void didChangeDependencies() {
+    Provider.of<Queues>(context).fetchServiceValues();
+    serviceValueList = Provider.of<Queues>(context).serviceValueList;
+    super.didChangeDependencies();
   }
 
   int serviceTime = 0;
@@ -266,7 +253,7 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   DropdownButton(
-                    key: UniqueKey(),
+                    key: hrsKey,
                     value: selectedHrs == 0 ? null : selectedHrs,
                     borderRadius: BorderRadius.circular(20),
                     menuMaxHeight: 200,
@@ -283,7 +270,7 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
                     width: 20,
                   ),
                   DropdownButton(
-                    key: UniqueKey(),
+                    key: minsKey,
                     value: selectedMins == 0 ? null : selectedMins,
                     borderRadius: BorderRadius.circular(20),
                     menuMaxHeight: 200,
@@ -364,7 +351,7 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
                 child: Row(
                   children: [
                     Text(
-                      '${(totalServiceTime/ 60).floor()} hrs ${totalServiceTime % 60} min',
+                      '${(totalServiceTime / 60).floor()} hrs ${totalServiceTime % 60} min',
                       style: const TextStyle(
                         fontSize: 20,
                       ),
@@ -384,8 +371,8 @@ class _JoinQueueScreenState extends State<JoinQueueScreen> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Provider.of<Queues>(context, listen: false)
-                              .joinQueue(serviceTime, totalServiceTime, services);
+                          Provider.of<Queues>(context, listen: false).joinQueue(
+                              serviceTime, totalServiceTime, services);
                           setState(() {
                             _showSnackBar();
                             Navigator.of(context).pop();
