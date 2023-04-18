@@ -1,9 +1,10 @@
-import 'package:booking/screens/admin.dart';
+import 'package:booking/screens/admin/admin_home.dart';
+import 'package:booking/screens/admin/edit_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'screens/admin_auth.dart';
+import 'screens/admin/admin_auth.dart';
 import 'screens/auth.dart';
 import 'screens/home.dart';
 import 'screens/join_queue.dart';
@@ -42,8 +43,9 @@ class MyApp extends StatelessWidget {
           Authscreen.routeName: (context) => Authscreen(),
           AdminAuth.routeName:(context) => AdminAuth(),
           Home.routeName: (context) => const Home(),
-          Admin.routeName:(context) => const Admin(),
+          AdminHomePage.routeName:(context) => const AdminHomePage(),
           JoinQueueScreen.routeName: (context) => const JoinQueueScreen(),
+          EditServices.routeName:(context) => const EditServices(),
         },
         debugShowCheckedModeBanner: false,
       ),

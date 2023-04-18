@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-import 'admin.dart';
+import 'admin_home.dart';
 
 class AdminAuth extends StatefulWidget {
   static const routeName = "/adminauth";
@@ -43,7 +43,7 @@ class _AdminAuthState extends State<AdminAuth> {
   }
 
   _redirect() {
-    Navigator.of(context).pushReplacementNamed(Admin.routeName);
+    Navigator.of(context).pushReplacementNamed(AdminHomePage.routeName);
   }
 
   @override
